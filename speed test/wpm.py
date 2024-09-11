@@ -3,19 +3,49 @@ from curses import wrapper
 import time
 import random
 
+def animated_text(stdscr, text, y, x, color_pair, delay=0.1):
+    for i, char in enumerate(text):
+        stdscr.addstr(y, x + i, char, color_pair)
+        stdscr.refresh()
+        time.sleep(delay)
 
 def start_screen(stdscr):
-	stdscr.clear()
-	stdscr.addstr("Welcome to the Speed Typing Test!")
-	stdscr.addstr("\nPress any key to begin!",curses.color_pair(1))
-	stdscr.addstr(3,0,"Press ESC to exit",curses.color_pair(2))
-	stdscr.addstr(15,30,"This project is developed by DEVASHISH GUPTA",curses.color_pair(2))
-	stdscr.refresh()
-	stdscr.getkey()
+    curses.start_color()
+    curses.init_pair(1, curses.COLOR_CYAN, curses.COLOR_BLACK)
+    curses.init_pair(2, curses.COLOR_GREEN, curses.COLOR_BLACK)
+    curses.init_pair(3, curses.COLOR_RED, curses.COLOR_BLACK)
+    
+    stdscr.clear()
+    stdscr.border()  # Add a border for better visuals
+
+    # Welcome message (animated)
+    animated_text(stdscr, "Welcome to the Speed Typing Test!", 2, 5, curses.color_pair(1), 0.05)
+    
+    # Blinking "Press any key to begin!"
+    for _ in range(5):
+        stdscr.addstr(4, 5, "Press any key to begin!", curses.color_pair(2) | curses.A_BOLD)
+        stdscr.refresh()
+        time.sleep(0.5)
+        stdscr.addstr(4, 5, " " * len("Press any key to begin!"), curses.color_pair(2))
+        stdscr.refresh()
+        time.sleep(0.5)
+    
+    # Static text for exit info
+    stdscr.addstr(6, 5, "Press ESC to exit", curses.color_pair(3))
+    
+    # Display developer credits at the bottom (with delay)
+    animated_text(stdscr, "This project is developed by DEVASHISH GUPTA", 15, 10, curses.color_pair(2), 0.05)
+    
+    stdscr.refresh()
+    stdscr.getkey()
+
 
 def display_text(stdscr, target, current, wpm=0):
 	stdscr.addstr(target)
 	stdscr.addstr(1, 0, f"WPM: {wpm}")
+	curses.init_pair(1, curses.COLOR_GREEN, curses.COLOR_BLACK)
+	curses.init_pair(2, curses.COLOR_RED, curses.COLOR_BLACK)
+	curses.init_pair(3, curses.COLOR_WHITE, curses.COLOR_BLACK)
 
 	for i, char in enumerate(current):
 		correct_char = target[i]
@@ -68,7 +98,6 @@ def main(stdscr):
 	curses.init_pair(1, curses.COLOR_GREEN, curses.COLOR_BLACK)
 	curses.init_pair(2, curses.COLOR_RED, curses.COLOR_BLACK)
 	curses.init_pair(3, curses.COLOR_WHITE, curses.COLOR_BLACK)
-
 	start_screen(stdscr)
 	while True:
 		wpm_test(stdscr)
